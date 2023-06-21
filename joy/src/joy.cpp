@@ -27,6 +27,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <rclcpp/rclcpp.hpp>
+#include <rclcpp_components/register_node_macro.hpp>
+#include <sensor_msgs/msg/joy.hpp>
+#include <sensor_msgs/msg/joy_feedback.hpp>
+
 #include <algorithm>
 #include <chrono>
 #include <functional>
@@ -37,11 +42,6 @@
 #include <thread>
 
 #include <SDL.h>
-
-#include <rclcpp/rclcpp.hpp>
-#include <rclcpp_components/register_node_macro.hpp>
-#include <sensor_msgs/msg/joy.hpp>
-#include <sensor_msgs/msg/joy_feedback.hpp>
 
 #include "joy/joy.hpp"
 
@@ -426,7 +426,6 @@ void Joy::eventThread()
   rclcpp::Time last_publish = this->now();
 
   do {
-
     bool should_publish = false;
     SDL_Event e;
     int wait_time_ms = autorepeat_interval_ms_;

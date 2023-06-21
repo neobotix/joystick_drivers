@@ -30,12 +30,12 @@
 #ifndef SPACENAV__SPACENAV_HPP_
 #define SPACENAV__SPACENAV_HPP_
 
-#include <vector>
 #include <rclcpp/rclcpp.hpp>
-
 #include <geometry_msgs/msg/twist.hpp>
 #include <geometry_msgs/msg/vector3.hpp>
 #include <sensor_msgs/msg/joy.hpp>
+
+#include <vector>
 
 #include "spnav.h" // NOLINT
 
