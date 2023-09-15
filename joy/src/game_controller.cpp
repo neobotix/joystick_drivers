@@ -27,7 +27,6 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-
 #include <algorithm>
 #include <chrono>
 #include <functional>
@@ -298,6 +297,12 @@ void GameController::handleControllerDeviceAdded(const SDL_ControllerDeviceEvent
     return;
   }
 
+  SDL_SetHint(SDL_HINT_JOYSTICK_HIDAPI_PS5, "1");
+  SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
+  SDL_SetHint(SDL_HINT_JOYSTICK_HIDAPI_PS5_RUMBLE, "1");
+  // SDL_GameControllerSetSensorEnabled(game_controller_, SDL_SENSOR_ACCEL, SDL_TRUE);
+  // SDL_GameControllerSetSensorEnabled(game_controller_, SDL_SENSOR_GYRO, SDL_TRUE);
+
   // We need to hold onto this so that we can properly remove it on a
   // remove event.
   joystick_instance_id_ = SDL_JoystickGetDeviceInstanceID(dev_id_);
@@ -320,9 +325,21 @@ void GameController::handleControllerDeviceAdded(const SDL_ControllerDeviceEvent
     has_rumble_string = "Yes";
   }
 
+  if (SDL_GameControllerHasSensor(game_controller_, SDL_SENSOR_ACCEL)) {
+    RCLCPP_INFO(this->get_logger(), "We have accelrometer");
+  } else {
+    RCLCPP_ERROR(this->get_logger(), "We have no accelrometer");
+  }
+
+  RCLCPP_INFO(this->get_logger(), "Numpads: %d", SDL_GameControllerGetNumTouchpads(game_controller_));
+
   RCLCPP_INFO(
     get_logger(), "Opened game controller: %s,  deadzone: %f, rumble: %s",
     SDL_GameControllerName(game_controller_), scaled_deadzone_, has_rumble_string);
+
+  if (SDL_GameControllerHasLED(game_controller_)) {
+    SDL_GameControllerSetLED(game_controller_, 254, 0, 0);
+  }
 }
 
 void GameController::handleControllerDeviceRemoved(const SDL_ControllerDeviceEvent & e)
@@ -412,6 +429,10 @@ void GameController::eventThread()
     }
 
     status = future_.wait_for(std::chrono::seconds(0));
+
+    // auto succ = SDL_GameControllerHasLED(game_controller_);
+    // std::cout<<succ<<std::endl;
+    // std::cout<<SDL_GameControllerHasSensor(game_controller_, SDL_SENSOR_GYRO);
   } while (status == std::future_status::timeout);
 }
 

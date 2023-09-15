@@ -13,9 +13,10 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
-find_package(sdl2_vendor REQUIRED)
-find_package(sdl2_custom REQUIRED)
+find_package(SDL2 REQUIRED)
 find_package(sensor_msgs REQUIRED)
+
+include_directories(${SDL2_INCLUDE_DIRS})
 
 add_library(joy SHARED src/joy.cpp)
 target_include_directories(joy PUBLIC
@@ -26,7 +27,7 @@ ament_target_dependencies(joy
   rclcpp_components
   sensor_msgs)
 target_link_libraries(joy
-  SDL2::SDL2)
+  ${SDL2_LIBRARIES})
 
 install(TARGETS joy EXPORT export_joy
   LIBRARY DESTINATION lib
@@ -77,8 +78,8 @@ ament_export_targets(export_game_controller)
 ament_export_dependencies(
   "rclcpp"
   "sensor_msgs"
-  "sdl2_vendor"
-  "sdl2_custom")
+  "SDL2"
+  )
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
