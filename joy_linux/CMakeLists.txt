@@ -1,10 +1,10 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.20)
 
 project(joy_linux)
 
 # Default to C++14
 if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD 17)
 endif()
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -24,13 +24,12 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   check_include_files(linux/joystick.h HAVE_LINUX_JOYSTICK_H)
 
   if(HAVE_LINUX_JOYSTICK_H)
-    include_directories(msg/cpp ${catkin_INCLUDE_DIRS})
     add_executable(joy_linux_node src/joy_linux_node.cpp)
-    ament_target_dependencies(joy_linux_node
-      "diagnostic_msgs"
-      "diagnostic_updater"
-      "rclcpp"
-      "sensor_msgs")
+    target_link_libraries(joy_linux_node PRIVATE
+      diagnostic_msgs::diagnostic_msgs
+      diagnostic_updater::diagnostic_updater
+      rclcpp::rclcpp
+      sensor_msgs::sensor_msgs)
     install(TARGETS joy_linux_node DESTINATION lib/${PROJECT_NAME})
 
     if(BUILD_TESTING)

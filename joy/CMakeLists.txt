@@ -1,10 +1,10 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.20)
 
 project(joy)
 
 # Default to C++14
 if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD 17)
 endif()
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -21,11 +21,10 @@ add_library(joy SHARED src/joy.cpp)
 target_include_directories(joy PUBLIC
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
   "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
-ament_target_dependencies(joy
-  rclcpp
-  rclcpp_components
-  sensor_msgs)
-target_link_libraries(joy
+target_link_libraries(joy PUBLIC
+  rclcpp::rclcpp
+  rclcpp_components::component
+  sensor_msgs::sensor_msgs
   SDL2::SDL2)
 
 install(TARGETS joy EXPORT export_joy
